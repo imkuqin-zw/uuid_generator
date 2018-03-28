@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package protobuf;
+
+message SnowflakeKey {
+    string name = 1;
+}
+
+message SnowflakeVal {
+    int64 value = 1;
+}
+
+message SnowflakeNullReq {
+}
+
+message SnowflakeUUID {
+    uint64 uuid = 1;
+}
+
+
+service Generator {
+  rpc Next (SnowflakeKey) returns (SnowflakeVal) {}
+  rpc GetUUID (SnowflakeNullReq) returns (SnowflakeUUID) {}
+}
