@@ -13,16 +13,16 @@ import (
 )
 
 const (
-	UUID_QUEUE = 1024 // uuid process queue
+	UUID_QUEUE = 1024
 )
 
-type RPCServer struct {
+type RpcServer struct {
 	etcd       *etcd.Etcd
 	machineID uint64 // 10-bit machine id
 	chProc    chan chan uint64
 }
 
-func (s *RPCServer) init() (err error) {
+func (s *RpcServer) init() (err error) {
 	s.chProc = make(chan chan uint64, UUID_QUEUE)
 	if s.etcd, err = etcd.NewEtcd(config.Conf.Etcd); err != nil {
 		return
@@ -35,7 +35,7 @@ func (s *RPCServer) init() (err error) {
 	return
 }
 
-func (s *RPCServer) Next(cxt context.Context, req *protobuf.SnowflakeKey) (*protobuf.SnowflakeVal, error) {
+func (s *RpcServer) Next(cxt context.Context, req *protobuf.SnowflakeKey) (*protobuf.SnowflakeVal, error) {
 	val, err := s.etcd.GetNextByName(req.Name)
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func (s *RPCServer) Next(cxt context.Context, req *protobuf.SnowflakeKey) (*prot
 	return &protobuf.SnowflakeVal{Value:val}, nil
 }
 
-func (s *RPCServer) GetUUID(context.Context, *protobuf.SnowflakeNullReq) (*protobuf.SnowflakeUUID, error) {
+func (s *RpcServer) GetUUID(context.Context, *protobuf.SnowflakeNullReq) (*protobuf.SnowflakeUUID, error) {
 	req := make(chan uint64, 1)
 	s.chProc <- req
 	return &protobuf.SnowflakeUUID{<-req}, nil
@@ -62,7 +62,7 @@ func Run() {
 		panic(err)
 	}
 
-	rpcServer := &RPCServer{}
+	rpcServer := &RpcServer{}
 	if err = rpcServer.init(); err != nil {
 		panic(err)
 	}

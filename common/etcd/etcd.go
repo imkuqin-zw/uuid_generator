@@ -32,7 +32,8 @@ func NewEtcd(c *config.Etcd) (etcdv3 *Etcd, err error) {
 	return
 }
 
-func (e *Etcd) GetNextByName(name string) (prevValue int64, err error) {
+func (e *Etcd) GetNextByName(name string) (next int64, err error) {
+	var prevValue int64
 	key := PATH + name
 	var resp *clientv3.GetResponse
 	for {
@@ -40,7 +41,7 @@ func (e *Etcd) GetNextByName(name string) (prevValue int64, err error) {
 			return
 		}
 		for _, val := range resp.Kvs {
-			prevValue, err = strconv.Atoi(string(val.Value))
+			prevValue, err = strconv.ParseInt(string(val.Value), 10, 64)
 			if err != nil {
 				err = fmt.Errorf("marlformed value")
 				return
@@ -52,6 +53,7 @@ func (e *Etcd) GetNextByName(name string) (prevValue int64, err error) {
 			common.CasDelay()
 			continue
 		}
+		next = prevValue + 1
 	}
 	return
 }
