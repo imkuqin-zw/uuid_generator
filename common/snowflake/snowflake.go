@@ -1,7 +1,7 @@
 package snowflake
 
 import (
-	"github.com/imkuqin-zw/id_generator/common"
+	"github.com/imkuqin-zw/uuid_generator/common"
 )
 
 const (

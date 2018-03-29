@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
-	"github.com/imkuqin-zw/id_generator/config"
-	"github.com/imkuqin-zw/id_generator/rpc"
+	"github.com/imkuqin-zw/uuid_generator/config"
+	"github.com/imkuqin-zw/uuid_generator/rpc"
 )
 
 func main() {

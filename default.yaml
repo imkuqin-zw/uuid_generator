@@ -1,9 +1,24 @@
 etcd:
  addrs:
   - "127.0.0.1:2379"
- root: "/id_generator/"
+ root: "/uuid_generator/"
  timeout: "1s"
 
 rpcserver:
  proto: "tcp"
- addr: ""
+ addr: "10.8.220.5:31000"
+
+servicediscovery:
+ name: "uuid_server"
+ interval: "5s"
+ ttl: "15s"
+
+locks:
+ userid:
+    name: "user_id"
+    root: "/locks/"
+    ttl: "10s"
+    addrs:
+      - "http://127.0.0.1:2379"
+      - "http://127.0.0.1:2379"
+

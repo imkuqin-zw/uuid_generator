@@ -1,15 +1,19 @@
 package rpc
 
 import (
-	"github.com/imkuqin-zw/id_generator/common/etcd"
-	"github.com/imkuqin-zw/id_generator/config"
+	"github.com/imkuqin-zw/uuid_generator/common/etcd"
+	"github.com/imkuqin-zw/uuid_generator/config"
 	"net"
-	sd "github.com/imkuqin-zw/id_generator/common/service_discovery/etcd"
+	sd "github.com/imkuqin-zw/uuid_generator/common/service_discovery/etcd"
 	"strings"
 	"google.golang.org/grpc"
 	"golang.org/x/net/context"
-	"github.com/imkuqin-zw/id_generator/rpc/protobuf"
-	"github.com/imkuqin-zw/id_generator/common/snowflake"
+	"github.com/imkuqin-zw/uuid_generator/rpc/protobuf"
+	"github.com/imkuqin-zw/uuid_generator/common/snowflake"
+	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 const (
@@ -24,7 +28,7 @@ type RpcServer struct {
 
 func (s *RpcServer) init() (err error) {
 	s.chProc = make(chan chan uint64, UUID_QUEUE)
-	if s.etcd, err = etcd.NewEtcd(config.Conf.Etcd); err != nil {
+	if s.etcd, err = etcd.NewEtcd(config.Conf.Etcd, config.Conf.Locks); err != nil {
 		return
 	}
 	if s.machineID, err = s.etcd.GetMachineID(); err != nil {
@@ -51,6 +55,7 @@ func (s *RpcServer) GetUUID(context.Context, *protobuf.SnowflakeNullReq) (*proto
 }
 
 func Run() {
+	fmt.Printf("server started %s\r\n", config.Conf.RpcServer.Addr)
 	lis, err := net.Listen(config.Conf.RpcServer.Proto, config.Conf.RpcServer.Addr)
 	if err != nil {
 		panic(err)
@@ -66,7 +71,17 @@ func Run() {
 	if err = rpcServer.init(); err != nil {
 		panic(err)
 	}
+	ch := make(chan os.Signal, 1)
+	signal.Notify(ch, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL, syscall.SIGHUP, syscall.SIGQUIT)
+	go func() {
+		s := <-ch
+		fmt.Printf("receive signal %v\r\n", s)
+		sd.UnRegister()
+		os.Exit(0)
+	}()
 	s := grpc.NewServer()
 	protobuf.RegisterGeneratorServer(s, rpcServer)
-	s.Serve(lis)
+	if err = s.Serve(lis); err != nil {
+		panic(err)
+	}
 }
