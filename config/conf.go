@@ -5,7 +5,6 @@ import (
 	"flag"
 	"io/ioutil"
 	"gopkg.in/yaml.v2"
-	"fmt"
 )
 
 var (
@@ -55,7 +54,6 @@ func Init() (err error) {
 	if buf, err = ioutil.ReadFile(confPath); err == nil {
 		err = yaml.Unmarshal(buf, Conf)
 	}
-	fmt.Println(Conf.Locks["userid"])
 	return
 }
 

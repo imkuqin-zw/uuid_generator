@@ -55,7 +55,6 @@ func (e *Etcd) GetNextByName(name string) (next int64, err error) {
 	var prevValue int64
 	key := PATH + name
 	var resp *clientv3.GetResponse
-
 	if err = e.etcdSync[name].Lock(); err != nil {
 		return
 	}
@@ -95,7 +94,6 @@ func (e *Etcd) GetMachineID() (machineId uint64, err error) {
 				err = fmt.Errorf("marlformed value")
 				return
 			}
-			fmt.Println(prevValue)
 		}
 		_, err = e.client.Put(context.Background(), UUID_KEY, fmt.Sprint(prevValue+1))
 		if err != nil {

@@ -18,7 +18,7 @@ func main() {
 		glog.Error(err)
 		panic(err)
 	}
-	ticker := time.NewTicker(1 * time.Millisecond)
+	ticker := time.NewTicker(1 * time.Second)
 	for {
 		select {
 		case <- ticker.C:

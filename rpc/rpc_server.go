@@ -55,7 +55,7 @@ func (s *RpcServer) GetUUID(context.Context, *protobuf.SnowflakeNullReq) (*proto
 }
 
 func Run() {
-	fmt.Printf("server started %s\r\n", config.Conf.RpcServer.Addr)
+	fmt.Printf("server started at %s\r\n", config.Conf.RpcServer.Addr)
 	lis, err := net.Listen(config.Conf.RpcServer.Proto, config.Conf.RpcServer.Addr)
 	if err != nil {
 		panic(err)
