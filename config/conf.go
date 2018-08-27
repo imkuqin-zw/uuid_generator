@@ -15,6 +15,7 @@ var (
 type Config struct {
 	Etcd *Etcd
 	RpcServer *RpcServer
+	HttpServer *HttpServer
 	ServiceDiscovery *ServiceDiscovery
 	Locks map[string]*EtcdSync
 }

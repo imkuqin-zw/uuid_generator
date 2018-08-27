@@ -1,6 +1,8 @@
 syntax = "proto3";
 
 package protobuf;
+import "google/api/annotations.proto";
+
 
 message SnowflakeKey {
     string name = 1;
@@ -19,6 +21,14 @@ message SnowflakeUUID {
 
 
 service Generator {
-  rpc Next (SnowflakeKey) returns (SnowflakeVal) {}
-  rpc GetUUID (SnowflakeNullReq) returns (SnowflakeUUID) {}
+  rpc Next (SnowflakeKey) returns (SnowflakeVal) {
+    option(google.api.http) = {
+        get: "/v1/generator/next/{name}"
+    };
+  }
+  rpc GetUUID (SnowflakeNullReq) returns (SnowflakeUUID) {
+    option(google.api.http) = {
+        get: "/v1/generator/uuid"
+    };
+  }
 }

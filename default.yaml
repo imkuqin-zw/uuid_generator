@@ -6,7 +6,10 @@ etcd:
 
 rpcserver:
  proto: "tcp"
- addr: "10.8.220.5:31000"
+ addr: ":31000"
+
+httpserver:
+ addr: ":8080"
 
 servicediscovery:
  name: "uuid_server"

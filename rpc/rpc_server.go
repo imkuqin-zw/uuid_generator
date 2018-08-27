@@ -51,7 +51,7 @@ func (s *RpcServer) Next(cxt context.Context, req *protobuf.SnowflakeKey) (*prot
 func (s *RpcServer) GetUUID(context.Context, *protobuf.SnowflakeNullReq) (*protobuf.SnowflakeUUID, error) {
 	req := make(chan uint64, 1)
 	s.chProc <- req
-	return &protobuf.SnowflakeUUID{<-req}, nil
+	return &protobuf.SnowflakeUUID{Uuid: <-req}, nil
 }
 
 func Run() {
